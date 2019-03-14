@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- return int or an entity or a list determine by SqlSession-->
+<mapper namespace="entity.User">
+    <!-- filter by id -->
+    <select id="selectOneUser" parameterType="int" resultType="entity.User">
+        select * from users where id = #{ id };
+    </select>
+
+    <!-- filterUsersByUserInfo-->
+    <select id="selectManyUsers" parameterType="entity.User" resultType="entity.User">
+        select * from users
+--  where tag can help us to combine statement
+--  and fix annoying joint
+        <where>
+            true
+          <if test="name != null">
+            and name = #{name}
+          </if>
+          <if test="password != null">
+            and password = #{password}
+          </if>
+          <if test="phone_number != null">
+            and phone_number = #{phone_number}
+          </if>
+
+--           you can use less than some time to get
+--           any rows as you want
+          <if test="create_time != null">
+              <![CDATA[
+                 AND create_time < #{create_time}
+              ]]>
+          </if>
+          <if test="create_time != null">
+              <![CDATA[
+                  AND update_time < #{update_time}
+              ]]>
+          </if>
+            limit 20;
+        </where>
+    </select>
+    <insert id="insertOneUser" parameterType="entity.User">
+        insert into users(name, password, email, phone_number)
+          values (#{name}, #{password}, #{email}, #{phone_number})
+    </insert>
+
+    <!-- update one, if id is omit, do nothing-->
+    <update id="updateOneUser" parameterType="entity.User">
+        update users
+          <set>
+              <if test="name != null">
+                  name = #{name},
+              </if>
+              <if test="password != null">
+                  password = #{password},
+              </if>
+              <if test="email != null">
+                  email = #{email},
+              </if>
+              <if test="phone_number != null">
+                  phone_number = #{phone_number},
+              </if>
+          </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteOneUser" parameterType="int">
+        delete from users where id = #{ id };
+    </delete>
+</mapper>
