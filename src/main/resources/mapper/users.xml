@@ -70,4 +70,5 @@
     <delete id="deleteOneUser" parameterType="int">
         delete from users where id = #{ id };
     </delete>
+
 </mapper>
